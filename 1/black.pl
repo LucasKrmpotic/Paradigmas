@@ -116,19 +116,14 @@ over(Mano):-
 	hand(Mano,ValorMano),
     ValorMano > 21.
 
-longitud([], 0).
-longitud([_|Resto], L):- 
-	longitud(Resto, LResto), L is LResto + 1.
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Implementacion de blackJack %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 blackJack(Mano):- 
-	longitud(Mano,L),
-    L = 2,
+	length(Mano, Len),
+    Len = 2,
     hand(Mano,ValorMano),
     ValorMano = 21.
 
@@ -152,5 +147,21 @@ hard_dealer(Hand):-
 hard_dealer(Hand):- 
 	hand(Hand, Value),
 	Value < 17.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implementacion de play %
+% %%%%%%%%%%%%%%%%%%%%%%%%
+
+
+play(Jugador, Crupier, _):-
+    hand(Jugador, ValorManoJugador), 
+    hand(Crupier, ValorManoCrupier),
+    not(ValorManoJugador > ValorManoCrupier) .
+
+play(Jugador, _, _):- 
+    hand(Jugador, ValorManoJugador),
+    hand(Jugador, ValorManoAux),
+    ValorManoJugador < 11, 
+    not(ValorManoAux > 18). 
 
 
