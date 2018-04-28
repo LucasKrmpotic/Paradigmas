@@ -136,23 +136,18 @@ blackJack(Mano):-
 % Implementacion de soft_dealer %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-soft_dealer(Hand):- 
+soft_dealer(Hand):-
 	hand(Hand, Value),
-	Value < 17.	
+	Value < 17,
+	not(hand(Hand, 17)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Implementacion de hard_dealer %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-vale_siete(Hand):-
-	hand(Hand,Value),
-	Value = 7.
-
 hard_dealer(Hand):-
-	hand(Hand, Value),
-	Value = 17,
-	member(card(a,_), Hand),
-	vale_siete(Hand).
+	hand(Hand, 17),
+	hand(Hand, 7) .
 
 hard_dealer(Hand):- 
 	hand(Hand, Value),
