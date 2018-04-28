@@ -91,9 +91,10 @@ value(card(k,_),10).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 hand([],0).
-hand([card(N,_)|Resto],Valor):- value(card(N,_),Valor1),
-                                hand(Resto,Valor2),
-                                Valor is Valor1+Valor2.
+hand([card(N,_)|Resto],Valor):- 
+	value(card(N,_),Valor1),
+    hand(Resto,Valor2),
+    Valor is Valor1+Valor2.
 
 
 
@@ -101,8 +102,9 @@ hand([card(N,_)|Resto],Valor):- value(card(N,_),Valor1),
 % Implementacion de twentyOne %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-twentyOne(Mano):- hand(Mano,ValorMano),
-                  ValorMano = 21.
+twentyOne(Mano):- 
+	hand(Mano,ValorMano),
+    ValorMano = 21.
 
 
 
@@ -110,11 +112,13 @@ twentyOne(Mano):- hand(Mano,ValorMano),
 % Implementacion de over %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-over(Mano):- hand(Mano,ValorMano),
-            ValorMano > 21.
+over(Mano):- 
+	hand(Mano,ValorMano),
+    ValorMano > 21.
 
 longitud([], 0).
-longitud([_|Resto], L):- longitud(Resto, LResto), L is LResto + 1.
+longitud([_|Resto], L):- 
+	longitud(Resto, LResto), L is LResto + 1.
 
 
 
@@ -122,8 +126,36 @@ longitud([_|Resto], L):- longitud(Resto, LResto), L is LResto + 1.
 % Implementacion de blackJack %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-blackJack(Mano):- longitud(Mano,L),
-                  L = 2,
-                  hand(Mano,ValorMano),
-                  ValorMano = 21.
+blackJack(Mano):- 
+	longitud(Mano,L),
+    L = 2,
+    hand(Mano,ValorMano),
+    ValorMano = 21.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implementacion de soft_dealer %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+soft_dealer(Hand):- 
+	hand(Hand, Value),
+	Value < 17.	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Implementacion de hard_dealer %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+vale_siete(Hand):-
+	hand(Hand,Value),
+	Value = 7.
+
+hard_dealer(Hand):-
+	hand(Hand, Value),
+	Value = 17,
+	member(card(a,_), Hand),
+	vale_siete(Hand).
+
+hard_dealer(Hand):- 
+	hand(Hand, Value),
+	Value < 17.
+
 
