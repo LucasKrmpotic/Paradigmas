@@ -152,6 +152,19 @@ hard_dealer(Hand):-
 % Implementacion de play %
 % %%%%%%%%%%%%%%%%%%%%%%%%
 
+fijate_mas_alto(Mano, 0, 0).
+fijate_mas_alto(Mano, ValorActual, ValorActual):-
+	hand(Mano, ValorActual).
+
+fijate_mas_alto(Mano, ValorActual, ValorMasAlto):-
+	ValorActualAux is ValorActual - 1,
+	fijate_mas_alto(Mano, ValorActualAux, ValorMasAlto).
+
+mano_mas_alta(Mano, ValorMasAlto):-
+	fijate_mas_alto(Mano, 21, ValorMasAlto).
+
+play(Jugador,_,_):-
+	not(twentyOne(Jugador)).
 
 play(Jugador, Crupier, _):-
     hand(Jugador, ValorManoJugador), 
@@ -163,5 +176,4 @@ play(Jugador, _, _):-
     hand(Jugador, ValorManoAux),
     ValorManoJugador < 11, 
     not(ValorManoAux > 18). 
-
 
