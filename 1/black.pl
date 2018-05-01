@@ -106,8 +106,6 @@ twentyOne(Mano):-
 	hand(Mano,ValorMano),
     ValorMano = 21.
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 % Implementacion de over %
 %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +150,7 @@ hard_dealer(Hand):-
 % Implementacion de play %
 % %%%%%%%%%%%%%%%%%%%%%%%%
 
-fijate_mas_alto(Mano, 0, 0).
+fijate_mas_alto(_, 0, 0).
 fijate_mas_alto(Mano, ValorActual, ValorActual):-
 	hand(Mano, ValorActual).
 
@@ -215,9 +213,8 @@ contar_uston_ss(Cartas, Barajas, Conteo):-
 es_as_once(Jugador,ValorMano):-
 	hand(Jugador, ValorMano),
 	ValorSoft is ValorMano - 10,
-	hand(Jugador, ValorMano),
+	hand(Jugador, ValorSoft),
 	!.
-
 
 % Hay posibilidad de baja si el conteo es bajo, eso significa que se jugaron bastantes altas.
 % Este valor es ajustable.
@@ -234,7 +231,8 @@ posibilidadAlta(Conteo):-
 play(Jugador, Crupier, _):-
     mano_mas_alta_optima(Jugador, ValorManoJugador), 
     mano_mas_alta_optima(Crupier, ValorManoCrupier),
-    not(ValorManoJugador > ValorManoCrupier) .
+    not(ValorManoJugador > ValorManoCrupier).
+
 
 % Ya sabemos que el valor de la mano supero a la del crupier.
 % Ahora hay que ver que no sean pocos puntos. 
@@ -260,4 +258,50 @@ play(Jugador, _, CartasJugadas):-
 	mano_mas_alta_optima(Jugador, ValorMano),	% Veo la mano mas cercana a 21. Veo si ese valor es
 	ValorMano < 16,
 	contar_uston_ss(CartasJugadas, 1, Conteo),	% es menor a 16 pido una carta siempre y cuando el valor de 
-	!posibilidadAlta(Conteo).					% el conteo me indique que no hay posibilidades de sacar una carta alta.
+	not(posibilidadAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%			UNIT TESTS 			 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%	Despues vemos como pasarlo a otro
+%	archivo onda 'tests.pl'.
+%
+%	Para ejecutar ingresar en la linea de comandos
+%	
+%	run_tests.
+%
+
+:- begin_tests(blackJack).
+
+test(hand):-
+	hand([card(a,_), card(k,_)], 21),
+	hand([card(a,_), card(k,_)], 11),
+	hand([card(a,_), card(k,_), card(3,_), card(10,_), card(8,_)], 32).
+
+test(twentyOne):-
+	twentyOne([card(a,_), card(k,_)]),
+	twentyOne([card(a,_), card(k,_), card(j,_)]),
+	twentyOne([card(3,_), card(6,_), card(j,_), card(2,_)]).
+
+test(over):-
+	over([card(k,_), card(k,_), card(3,_)]).
+
+test(blackJack):-
+	blackJack([card(a,_), card(10,_)]).
+
+test(soft_dealer):-
+	not(soft_dealer([card(6,_), card(a,_)])).
+
+test(hard_dealer):-
+	hard_dealer([card(6,_), card(a,_)]).
+
+test(hard_dealer):-
+	hard_dealer([card(6,_), card(a,_)]).
+
+test(mano_mas_alta_optima):-
+	mano_mas_alta_optima([card(a,_), card(k,_), card(3,_), card(10,_), card(8,_)], 0),
+	mano_mas_alta_optima([card(a,_), card(a,_), card(3,_), card(10,_), card(2,_)], 17).
+
+:- end_tests(blackJack).
