@@ -39,27 +39,27 @@
 
     
 
-### Comandos de juego
-1
+### Lógica de la regla *play/3*
+
+Pide cartas siempre que la mano del crupier sea superior.
+
 ```prolog
-% Juega si el valor de la mano del jugador no supero a la mano del crupier
 play(Jugador, Crupier, _):-
     mano_mas_alta_optima(Jugador, ValorManoJugador), 
     mano_mas_alta_optima(Crupier, ValorManoCrupier),
     not(ValorManoJugador > ValorManoCrupier).
+
 ```
+Habiendo superado al crupier, pide carta si el valor de la mano es menor o igual a 11, salvo que sea con un **as** ( también es 18 !! ) y el conteo de cartas arroje que es probable que venga una carta mas baja.
 
 ```prolog
-% Ya sabemos que el valor de la mano supero a la del crupier.
-% Ahora hay que ver que no sean pocos puntos. 
-% Juega si el valor de la mano es menor a 11 pero no necesariamente si la mano mas alta es mayor a 18.
-% Para lo siguiente calcula las probabilidades en la tercera regla
 play(Jugador, _, _):- 
     hand(Jugador, ValorManoJugador),
     mano_mas_alta_optima(Jugador, ValorManoAux),
     ValorManoJugador < 11, 
     not(ValorManoAux > 18). 
 ```
+
 
 ```prolog
 % Aca vemos cuantas posibilidades hay para pedir cartas. Hay que pensar que si tenes un

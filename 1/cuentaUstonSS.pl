@@ -1,7 +1,16 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Implementacion de uston ss %
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/***********************************************************
+ * 
+ * Sistema de Cuenta de cartasJugadas uston ss
+ * 
+ * Info sobre uston ss: 
+ * http://www.countingedge.com/es/Cuenta-de-cartasJugadas/uston-ss/
+ * 
+ *
+ ***********************************************************/
+
+/**********************************************
+ * Valores de las cartasJugadas en el sistema uston ss 
+***********************************************/
 valor_uston_ss(a,-2).
 valor_uston_ss(2,2).
 valor_uston_ss(3,2).
@@ -16,34 +25,39 @@ valor_uston_ss(j,-2).
 valor_uston_ss(q,-2).
 valor_uston_ss(k,-2).
 
-contame_uston_ss([], ConteoActual, ConteoActual).
 
-contame_uston_ss(Cartas, ConteoActual, Conteo):-
-	[card(Carta,_)| Resto] = Cartas,
+/**
+ * Caso Base: CartasJugadas es vacía, el valor actual es el valor de Cuenta
+ */
+uston_ss([], _N, Cuenta):-
+	_N = Cuenta.
+
+/**
+ * Caso Recursivo
+ */
+uston_ss(CartasJugadas, _N, Cuenta):-
+	[card(Carta,_)| Resto] = CartasJugadas,
 	valor_uston_ss(Carta, ValorHuston),
-	ConteoNuevo is ConteoActual + ValorHuston,
-	contame_uston_ss(Resto, ConteoNuevo, Conteo).
+	Conteo is _N + ValorHuston,
+	uston_ss(Resto, Conteo, Cuenta).
 
-% La cantidad de barajas hacen que el conteo inicial sea de cantidadDeBarajas * -2
-% segun el algoritmo de conteo Huston SS.
-contar_uston_ss(Cartas, Barajas, Conteo):-
+/**
+ * uston ss obtiene el valor inicial de la cuenta multiplicando 
+ * el número de barajas por  -2. 
+ * 
+ * Esta regla calcula el valor inicial y luego lanza la primera
+ * llamada recursiva 
+ */
+contar_uston_ss(CartasJugadas, Barajas, Cuenta):-
 	ValorInicial is Barajas * -2,
-	contame_uston_ss(Cartas, ValorInicial, Conteo).
+	uston_ss(CartasJugadas, ValorInicial, Cuenta).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-es_as_once(Jugador,ValorMano):-
-	hand(Jugador, ValorMano),
-	ValorSoft is ValorMano - 10,
-	hand(Jugador, ValorSoft),
-	!.
-
-% Hay posibilidad de baja si el conteo es bajo, eso significa que se jugaron bastantes altas.
+% Hay posibilidad de baja si el Cuenta es bajo, eso significa que se jugaron bastantes altas.
 % Este valor es ajustable.
-posibilidadBaja(Conteo):-
-	Conteo < -2.				
+posibilidadDeCartaBaja(Cuenta):-
+	Cuenta < -2.				
 
-% Hay posibilidad de baja si el conteo es bajo, eso significa que se jugaron bastantes altas.
+% Hay posibilidad de baja si el Cuenta es bajo, eso significa que se jugaron bastantes altas.
 % Este valor es ajustable.
-posibilidadAlta(Conteo):-
-	Conteo > 0.			
+posibilidadDeCartaAlta(Cuenta):-
+	Cuenta > 0.			

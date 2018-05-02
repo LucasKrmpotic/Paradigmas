@@ -9,7 +9,7 @@
 :- [hechos].
 :- [objetivosPreliminares].
 :- [objetivosIntermedios].
-:- [helpers].
+:- [utils].
 :- [cuentaUstonSS].	
 
 
@@ -37,14 +37,14 @@ play(Jugador, _, CartasJugadas):-
 	ValorMano > 18,
 	es_as_once(Jugador, ValorMano), 			% soft, o sea, tiene un A con valor 11. Cuento las
 	contar_uston_ss(CartasJugadas, 1, Conteo),	% cartas con uston ss y me fijo si hay la posibilidad que me toque 
-	posibilidadBaja(Conteo).					% una carta baja. Si es asi juego. 
+	posibilidadDeCartaBaja(Conteo).					% una carta baja. Si es asi juego. 
 
 % Aca vemos la posibilidad de seguir sacando cartas para > 11 pero < 18. 
 play(Jugador, _, CartasJugadas):-
 	mano_mas_alta_optima(Jugador, ValorMano),	% Veo la mano mas cercana a 21. Veo si ese valor es
 	ValorMano < 16,
 	contar_uston_ss(CartasJugadas, 1, Conteo),	% es menor a 16 pido una carta siempre y cuando el valor de 
-	not(posibilidadAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
+	not(posibilidadDeCartaAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
 
 
 :- [tests].

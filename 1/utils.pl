@@ -48,3 +48,14 @@ mejor_valor([_|Resto], _N, MejorValor):-
 mano_mas_alta(Mano, MejorValor):-
 	findall(X, hand(Mano, X), ListaValoresDeLaMano),
 	mejor_valor(ListaValoresDeLaMano, 0, MejorValor).
+
+
+/**
+ * Observa si un ValorMano para ManoJugador
+ * se compone de un AS con valor 11
+ */
+es_as_once(ManoJugador,ValorMano):-
+		hand(ManoJugador, ValorMano),
+		ValorSoft is ValorMano - 10,
+		hand(ManoJugador, ValorSoft),
+		!.

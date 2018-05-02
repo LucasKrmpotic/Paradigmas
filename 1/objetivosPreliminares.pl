@@ -1,7 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Implementacion de hand  %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/***************************
+* Implementacion de hand 
+****************************/
 hand([],0).
 hand([card(N,_)|Resto],Valor):- 
 	value(card(N,_),Valor1),
@@ -9,28 +8,23 @@ hand([card(N,_)|Resto],Valor):-
     Valor is Valor1+Valor2.
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Implementacion de twentyOne %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/******************************
+* Implementacion de twentyOne 
+*******************************/
 twentyOne(Mano):- 
 	hand(Mano,ValorMano),
     ValorMano = 21.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Implementacion de over %
-%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/*************************
+* Implementacion de over 
+**************************/
 over(Mano):- 
 	hand(Mano,ValorMano),
     ValorMano > 21.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Implementacion de blackJack %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+/******************************
+* Implementacion de blackJack 
+*******************************/
 blackJack(Mano):- 
 	length(Mano, Len),
     Len = 2,
