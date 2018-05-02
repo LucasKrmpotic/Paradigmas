@@ -29,16 +29,16 @@ valor_uston_ss(k,-2).
 /**
  * Caso Base: CartasJugadas es vacía, el valor actual es el valor de Cuenta
  */
-uston_ss([], _N, Cuenta):-
-	_N = Cuenta.
+uston_ss([], _, Cuenta):-
+	_ = Cuenta.
 
 /**
  * Caso Recursivo
  */
-uston_ss(CartasJugadas, _N, Cuenta):-
+uston_ss(CartasJugadas, Acumulador, Cuenta):-
 	[card(Carta,_)| Resto] = CartasJugadas,
 	valor_uston_ss(Carta, ValorHuston),
-	Conteo is _N + ValorHuston,
+	Conteo is Acumulador + ValorHuston,
 	uston_ss(Resto, Conteo, Cuenta).
 
 /**
