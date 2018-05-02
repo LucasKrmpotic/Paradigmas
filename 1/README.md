@@ -18,7 +18,7 @@
 
 + ## Estructura del proyecto
     + [cartas.pl](cartas.pl): definición de las cartas y sus valores
-    + [mejorJugada.pl](mejorJugada.pl):  reglas enunciadas en los objetivos preliminares
+    + [utils.pl](utils.pl):  reglas enunciadas en los objetivos preliminares
     + [dealer.pl](dealer.pl):  reglas enunciadas en los objetivos intermedios
     + [mejorJugada.pl](mejorJugada.pl): lógica para decidir la mejor jugada en las condiciones actuales.
     + [cuentaUstonSS.pl](cuentaUstonSS.pl): lógica de conteo de cartas según el sistema Uston SS
@@ -29,6 +29,8 @@
 
 
 ### Lógica de la regla *play/3*
+
+Argumentos:
 
 - **ManoManoJugador:** lista con las cartas del Manojugador en una mano.
 
@@ -46,18 +48,18 @@ La lógica de **mejor_jugada/2** se encuentra declarada en el archivo [mejorJuga
 
 ```prolog
 play(ManoJugador, ManoCrupier, _):-
-    mejor_jugada(ManoJugador, ValorManoManoJugador), 
+    mejor_jugada(ManoJugador, ValorManoJugador), 
     mejor_jugada(ManoCrupier, ValorManoManoCrupier),
-    not(ValorManoManoJugador > ValorManoManoCrupier).
+    not(ValorManoJugador > ValorManoManoCrupier).
 ```
 
-2) Habiendo superado al crupier, pide carta si el valor de la mano es menor o igual a 11, salvo que sea con un **as** ( también es 18 !! ) y el conteo de cartas arroje que es probable que venga una carta mas baja.
+2) Habiendo superado al crupier, pide carta si el valor de la mano es menor o igual a 11, salvo que sea con un **as** ( también es 18 !! ) y el conteo de cartas arroje que es probable que venga una carta baja.
 
 ```prolog
 play(ManoJugador, _, _):- 
-    hand(ManoJugador, ValorManoManoJugador),
+    hand(ManoJugador, ValorManoJugador),
     mejor_jugada(ManoJugador, ValorManoAux),
-    ValorManoManoJugador < 11, 
+    ValorManoJugador < 11, 
     not(ValorManoAux > 18). 
 ```
 
@@ -83,3 +85,37 @@ play(ManoJugador, _, CartasJugadas):-
 	not(posibilidadDeCartaAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
 ```
 
+---
+### Lógica de la regla *mejor_jugada/2*
+
+Argumentos: 
+
+- **Mano:** lista de cartas de una mano.
+-**MejorValor**: el valor más cercano a 21 pero no mayor a 21 dentro de los valores posibles de Mano.
+
+```prolog
+mejor_jugada(Mano, MejorValor):-
+	findall(X, hand(Mano, X), ListaValoresDeLaMano),
+	mejor_valor_mano(ListaValoresDeLaMano, 0, MejorValor).
+```
+
+Los posibles valores del **as** generan diferentes valores para una mano. Para decidir si se pide una nueva carta es necesario analizar el contexto, es decir, valores posibles de mano del Crupier y probabilidades de que la próxima carta sea baja (=<6) o alta (>6) según el sistema de conteo de cartas Uston SS.
+
+La regla *mejor_jugada/2* define una lista con los valores posibles de la mano haciendo uso de *findall/3*, y llama a la funcion *mejor_valor_mano/3* que unifica con el valor de mano mas cercano a 21 pero no mayor a 21.
+
+---
+### Sistema de conteo de cartas **Uston SS**
+
+El sistema de conteo de cartas **Uston SS** define que una **carta baja es aquella cuyo valor es menor o igual a 6**, mientras que una **carta alta es aquella cuyo valor es estríctamente mayor a 6**. 
+
+Además, cada carta está asociada a un valor, que indica en cuanto hay que modificar la **Cuenta** cuando la carta es descubierta. Los valores asignados a cada carta son los siguientes: 
+
+| 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | J | Q | K | A |
+|---|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:--:|:-:|:-:|:-:|:-:|
+|+2 |+2 | +2| +3| +2| +1| 0 | -1| -2 | -2| -2| -2| -2| 
+
+El **valor inicial de Cuenta** se calcula multiplicando por **-2** la cantidad de barajas con las que se juega.
+
+De este modo, el valor inicial de **Cuenta** se va alterando según el peso de cada carta que va saliendo. Así, **Cuenta** < -2 indica probabilidad de carta baja, mientras que **Cuenta** > 0 indica probabilidad de carta alta.
+
+ 

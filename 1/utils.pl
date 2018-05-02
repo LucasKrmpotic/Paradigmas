@@ -1,3 +1,10 @@
+/********************************************
+ *  
+ * Implementación de las reglas enunciadas en 
+ * los objetivos preliminares.
+ *
+ ********************************************/
+
 /***************************
 * Implementacion de hand 
 ****************************/

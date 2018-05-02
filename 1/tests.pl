@@ -2,9 +2,6 @@
 %			UNIT TESTS 			 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%	Despues vemos como pasarlo a otro
-%	archivo onda 'tests.pl'.
-%
 %	Para ejecutar ingresar en la linea de comandos
 %	
 %	run_tests.

@@ -1,10 +1,12 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Paradigmas y Lenguajes de Programación - 2018
-% TP 1 - Prolog
-% Alumnos: 
-%   Alzugaray Luciano
-%   Krmpotic Lucas
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/**********************************************
+* Paradigmas y Lenguajes de Programación - 2018
+* TP 1 - Prolog
+* 
+* Alumnos: 
+*	Alzugaray Luciano
+*  	Krmpotic Lucas 
+***********************************************/ 
+
 
 :- [cartas].
 :- [utils].
@@ -67,6 +69,5 @@ play(ManoJugador, _, CartasJugadas):-
 	not(cota_superior(ValorMano)),
 	contar_uston_ss(CartasJugadas, 1, Conteo),	% es menor a 16 pido una carta siempre y cuando el valor de 
 	not(posibilidadDeCartaAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
-
-
+	
 :- [tests].
