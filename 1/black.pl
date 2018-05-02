@@ -6,11 +6,11 @@
 %   Krmpotic Lucas
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:-[hechos].
-:-[objetivos_preliminares].
-:-[objetivos_intermedios].
-:-[helpers].
-:-[cuenta_uston_ss].	
+:- [hechos].
+:- [objetivosPreliminares].
+:- [objetivosIntermedios].
+:- [helpers].
+:- [cuentaUstonSS].	
 
 
 % Juega si el valor de la mano del jugador no supero a la mano del crupier
