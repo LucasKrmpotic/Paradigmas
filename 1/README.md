@@ -1,14 +1,14 @@
 ### Paradigmas y Lenguajes de Programación - UNPSJB Trelew
 
-## Laboratorio 04 
+## Laboratorio 01
 
 ---
 
 # Blackjack
 
 **Cátedra:**
-+ Romina Stickar
-+ Lautaro Pecile
++ Prof: Lic. Romina Stickar
++ JTP:  Lic. Lautaro Pecile
 
 **Alumnos:**
 + Alzugaray Luciano
@@ -17,13 +17,13 @@
 ---
 
 + ## Estructura del proyecto
-    + hechos.pl: 
-    + objetivosPreliminares.pl
-    + objetivosIntermedios.pl
-    + helpers.pl
-    + cuentaUstonSS.pl
-    + black.pl
-    + tests.pl
+    + hechos.pl: contiene la definición de las cartas y sus valores
+    + objetivosPreliminares.pl: contiene las reglas enunciadas en los objetivos preliminares
+    + objetivosIntermedios.pl: contiene las reglas enunciadas en los objetivos intermedios
+    + utils.pl: reglas utilitarias 
+    + cuentaUstonSS.pl: contiene la lógica de conteo de cartas según el sistema Uston SS
+    + black.pl: archivo principal de la base de conocimientos
+    + tests.pl: conjunto de casos de prueba para cada regla.
 
 ---
 
