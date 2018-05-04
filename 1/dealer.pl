@@ -1,22 +1,33 @@
 
 
-
 /*******************************
 * Implementacion de soft_dealer 
 *******************************/
 soft_dealer(Hand):-
-	hand(Hand, Value),
-	Value < 17,
-	not(hand(Hand, 17)).
+	mejor_jugada(Hand, MejorValor),
+	MejorValor < 17,
+	format('hit',[]),
+	nl.
 
+soft_dealer(_):- 
+	format('stand',[]),
+	nl.
 
 /*******************************
 * Implementacion de hard_dealer 
 *******************************/
 hard_dealer(Hand):-
-	hand(Hand, 17),
-	hand(Hand, 7) .
+	mejor_jugada(Hand, 17),
+	hand(Hand, 7),
+	format('hit',[]),
+	nl.
 
 hard_dealer(Hand):- 
-	hand(Hand, Value),
-	Value < 17.
+	mejor_jugada(Hand, MejorValor),
+	MejorValor < 17,
+	format('hit',[]),
+	nl. 
+
+hard_dealer(_):- 
+	format('stand',[]),
+	nl.

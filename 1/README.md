@@ -17,12 +17,13 @@
 ---
 
 + ## Estructura del proyecto
+    + [black.pl](black.pl): Contiene la lógica para mandar comandos y ejecutar acciones.
     + [cartas.pl](cartas.pl): definición de las cartas y sus valores
     + [utils.pl](utils.pl):  reglas enunciadas en los objetivos preliminares
     + [dealer.pl](dealer.pl):  reglas enunciadas en los objetivos intermedios
     + [mejorJugada.pl](mejorJugada.pl): lógica para decidir la mejor jugada en las condiciones actuales.
     + [cuentaUstonSS.pl](cuentaUstonSS.pl): lógica de conteo de cartas según el sistema Uston SS
-    + [black.pl](black.pl): archivo principal de la base de conocimientos
+    + [play.pl](play.pl): archivo principal de la base de conocimientos
     + [tests.pl](tests.pl): conjunto de casos de prueba para cada regla.
 
 ---
@@ -116,6 +117,40 @@ Además, cada carta está asociada a un valor, que indica en cuanto hay que modi
 
 El **valor inicial de Cuenta** se calcula multiplicando por **-2** la cantidad de barajas con las que se juega.
 
-De este modo, el valor inicial de **Cuenta** se va alterando según el peso de cada carta que va saliendo. Así, **Cuenta** < -2 indica probabilidad de carta baja, mientras que **Cuenta** > 0 indica probabilidad de carta alta.
+De este modo, el valor inicial de **Cuenta** se va alterando según el peso de cada carta que va saliendo. Así, **Cuenta** < -8 indica probabilidad de carta baja, mientras que **Cuenta** > 4 indica probabilidad de carta alta.
 
- 
+---
+### Comandos
+
+Los comandos admitidos son:
+    
+- swipl -s black.pl play <Hand> <Dealer> <Cards>
+
+Ejecuta el comando play con las cartas en juego. Un ejemplo de ejecución seria
+    swipl -s black.pl play hand jd ap dealer kt 2d cards jd ap kt 2d
+
+- swipl -s black.pl dealer soft <Hand>
+
+Ejecuta el comando dealer_soft con las cartas del dealer. Un ejemplo de ejecución seria
+    swipl -s black.pl dealer soft ad 6t
+
+- swipl -s black.pl dealer hard <Hand>
+
+Ejecuta el comando dealer_hard con las cartas del dealer. Un ejemplo de ejecución seria
+    swipl -s black.pl dealer hard ad 6t
+
+Las reglas de parseado estan en el archivo black.pl. Cada comando tiene sigue un arbol de derivación,
+hasta comprobar que el comando sea correcto. En caso contrario, un mensaje de "comando incorrecto" aparece
+en pantalla.
+
+En el caso de estar bien, ejecuta la regla hit o stand de acuerdo a si sigue jugando o se queda.
+
+Para la traducción de las cartas está la regla string_to_card/2, que te devuelve una carta dado una token que signifique una carta.
+
+La regla parse_args_play/2 es la que te parsea los argumentos de play y ejecuta el play.
+
+---
+### Correr tests
+
+El código contiene tests por cada función. Ante cualquier cambio o para prueba del código, se puede correr los tests con run_tests.
+

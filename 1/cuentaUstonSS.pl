@@ -55,9 +55,9 @@ contar_uston_ss(CartasJugadas, Barajas, Cuenta):-
 % Hay posibilidad de baja si el Cuenta es bajo, eso significa que se jugaron bastantes altas.
 % Este valor es ajustable.
 posibilidadDeCartaBaja(Cuenta):-
-	Cuenta < -2.				
+	Cuenta < -8.				
 
 % Hay posibilidad de baja si el Cuenta es bajo, eso significa que se jugaron bastantes altas.
 % Este valor es ajustable.
 posibilidadDeCartaAlta(Cuenta):-
-	Cuenta > 0.			
+	Cuenta > 4.			

@@ -1,73 +1,95 @@
-/**********************************************
-* Paradigmas y Lenguajes de Programación - 2018
-* TP 1 - Prolog
-* 
-* Alumnos: 
-*	Alzugaray Luciano
-*  	Krmpotic Lucas 
-***********************************************/ 
+/********************************************
+ *  
+ * Implementación las reglas main para parseo
+ * de comando y ejecución.
+ *
+ ********************************************/
 
 
-:- [cartas].
-:- [utils].
-:- [dealer].
-:- [mejorJugada].
-:- [cuentaUstonSS].	
+:- set_prolog_flag(verbose, silent).
+
+:- initialization main.
+
+:- [play].
+
+/*Convierte una cadena en número si es que la cadena contiene un nro */
+get_number_atom(S, A) :- 
+  atom_number(S, A), 
+  !.
+
+get_number_atom(S, S).
+
+string_to_card(S, card(Numero,P)) :-
+  string_chars(S, [N, P]),  /* separa en caracteres la cadena S */ 
+  get_number_atom(N, Numero).
+
+/* Regla para 10 (son dos digitos) */
+string_to_card(S, card(Numero,P)) :-
+  string_chars(S, ['1', '0', P]),  /* separa en caracteres la cadena S */ 
+  Numero = 10.
+
+/* Funciones recursivas para obtener las cartas y devolver el resto de argumentos*/
+get_cards_aux([Carta| Resto], Argumentos, ListaAux ,Devolucion):-
+  string_to_card(Carta, CartaAux),
+  ListaAux2 = [CartaAux| ListaAux],
+  get_cards_aux(Resto, Argumentos, ListaAux2, Devolucion).
+
+get_cards_aux(RestoArgumentos, RestoArgumentos, Devolucion , Devolucion).
+
+/* Obtiene las cartas y argumentos restantes de una lista*/
+get_cards(Cartas, Argumentos, Devolucion):-
+  get_cards_aux(Cartas, Argumentos, [] ,Devolucion).
+
+get_cards([], [], []).
+
+ejecutarDealer([hard | Cartas]):-
+  get_cards(Cartas, _, Hand),
+  hard_dealer(Hand).
+
+ejecutarDealer([soft | Cartas]):-
+  get_cards(Cartas, _, Hand),
+  soft_dealer(Hand).
+
+ejecutarDealer([_]):-
+  format('Comando incorrecto', []),
+  nl.
+
+parse_args_play_hand([hand|Resto], Argumentos_Dealer, Hand):-
+  get_cards(Resto, Argumentos_Dealer, Hand),!.
+
+parse_args_play_dealer([dealer|Resto], Argumentos_Cards, Dealer):-
+  get_cards(Resto, Argumentos_Cards, Dealer),!.
+
+parse_args_play_cards([cards|Resto], Cards):-
+  get_cards(Resto, _, Cards),!.
+
+parse_args_play(Argumentos, Lista):-
+  parse_args_play_hand(Argumentos, Argumentos_Dealer, Hand),
+  parse_args_play_dealer(Argumentos_Dealer, Argumentos_Cards, Dealer),
+  parse_args_play_cards(Argumentos_Cards,Cards),
+
+  Lista = [Hand, Dealer, Cards].
+  
+ejecutarPlay(Argumentos):-
+  parse_args_play(Argumentos, [Hand, Dealer, Cards]),
+  play(Hand, Dealer, Cards).
+
+ejecutarPlay(_):-
+  format('Comando incorrecto', []),
+  nl.
+
+ejecutarComando([dealer | Resto]) :-
+    ejecutarDealer(Resto).
+ejecutarComando([play | Resto]) :-
+	ejecutarPlay(Resto).
+ejecutarComando(_) :-
+	format('Comando no entendido.\n', []).
+
+main :-
+  current_prolog_flag(argv, Argv),
+  ejecutarComando(Argv).
+
+main :-
+  halt(1).
 
 
-/**
- * Hasta este valor de mano ninguna carta que se agregue 
- * generaria un sobrepaso de 21
- */
-cota_inferior(ValorMano):-
-	ValorMano < 11.
-
-/**
- * Hasta este valor la decisión de pedir carta depende de 
- * la cuenta Uston SS
- */
-valor_umbral(ValorMano):-
-	 ValorMano >= 17.
-
-/**
- * A partir este valor se planta independientemente
- * del valor de la cuenta Uston SS.
- */
-cota_superior(ValorMano):-
-		ValorMano >= 19.
-
-% Juega si el valor de la mano del ManoJugador no supero a la mano del ManoCrupier
-play(ManoJugador, ManoCrupier, _):-
-    mejor_jugada(ManoJugador, ValorManoJugador), 
-    mejor_jugada(ManoCrupier, ValorManoManoCrupier),
-    not(ValorManoJugador > ValorManoManoCrupier).
-
-
-% Ya sabemos que el valor de la mano supero a la del ManoCrupier.
-% Ahora hay que ver que no sean pocos puntos. 
-% Juega si el valor de la mano es menor a 11 pero no necesariamente si la mano mas alta es mayor a 18.
-% Para lo siguiente calcula las probabilidades en la tercera regla
-play(ManoJugador, _, _):- 
-    hand(ManoJugador, ValorManoJugador),
-    mejor_jugada(ManoJugador, ValorManoAux),
-    cota_inferior(ValorManoJugador), 
-    not(valor_umbral(ValorManoAux)). 
-
-% Aca vemos cuantas posibilidades hay para pedir cartas. Hay que pensar que si tenes un
-% >16 soft podemos seguir pidiendo. Más si hay posibilidades de que hayan cartas bajas.
-play(ManoJugador, _, CartasJugadas):-
-	mejor_jugada(ManoJugador, ValorMano),	% Veo la mano mas cercana a 21. Veo si ese valor es
-	valor_umbral(ValorMano),
-	not(cota_superior(ValorMano)),
-	es_as_once(ManoJugador, ValorMano), 			% soft, o sea, tiene un A con valor 11. Cuento las
-	contar_uston_ss(CartasJugadas, 1, Conteo),	% cartas con uston ss y me fijo si hay la posibilidad que me toque 
-	posibilidadDeCartaBaja(Conteo).					% una carta baja. Si es asi juego. 
-
-% Aca vemos la posibilidad de seguir sacando cartas para > 11 pero < 18. 
-play(ManoJugador, _, CartasJugadas):-
-	mejor_jugada(ManoJugador, ValorMano),	% Veo la mano mas cercana a 21. Veo si ese valor es
-	not(cota_superior(ValorMano)),
-	contar_uston_ss(CartasJugadas, 1, Conteo),	% es menor a 16 pido una carta siempre y cuando el valor de 
-	not(posibilidadDeCartaAlta(Conteo)).				% el conteo me indique que no hay posibilidades de sacar una carta alta.
-	
-:- [tests].
