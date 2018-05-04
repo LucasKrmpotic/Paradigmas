@@ -20,7 +20,7 @@
     + [cartas.pl](cartas.pl): definición de las cartas y sus valores
     + [utils.pl](utils.pl):  reglas enunciadas en los objetivos preliminares
     + [dealer.pl](dealer.pl):  reglas enunciadas en los objetivos intermedios
-    + [mejorJugada.pl](mejorJugada.pl): lógica para decidir la mejor jugada en las condiciones actuales.
+    + [mejorJugada.pl](mejorJugada.pl): lógica para decidir la mejor jugada según la mano propia, la del crupier y las cartas jugadas.
     + [cuentaUstonSS.pl](cuentaUstonSS.pl): lógica de conteo de cartas según el sistema Uston SS
     + [black.pl](black.pl): archivo principal de la base de conocimientos
     + [tests.pl](tests.pl): conjunto de casos de prueba para cada regla.
@@ -40,7 +40,16 @@ Argumentos:
 
 La regla **play/3** hace uso del functor **mejor_jugada/2** que unifica con la mejor jugada posible en las condiciones actuales, según el sistema de conteo de cartas **Uston SS**.
 
-La lógica de **mejor_jugada/2** se encuentra declarada en el archivo [mejorJugada.pl](mejorJugada.pl) 
+La lógica de **mejor_jugada/2** se encuentra declarada en el archivo [mejorJugada.pl](mejorJugada.pl)
+
+Además se declaran 3 reglas que unifican con valores significativos para la decisión de seguir pidiendo cartas o no. Estas son: 
+
+1) **cota_inferior/1:** unifica con **ValorMano < 11** (11 es un valor que garantiza que pedir una carta no generará un **over** independientemente de como se componga ese 11)
+
+2) **valor_umbral/1:** unifica con **ValorMano >= 17** (17 es un valor en el cual la decisión de pedir o no carta dependerá de las probabilidades de carta baja o alta que arroje el estado de **Cuenta** según el sistema **Uston SS**)
+
+3) **cota_superior/1:** unifica con **ValorMano >= 19** (a partir del 19 inclusive, convenimos en que la mejor jugada es plantarse independientemente de si la cuenta **Uston SS** arroja probabilidad de carta baja).
+
 
 **Las posibilidades son:**
 
@@ -118,4 +127,3 @@ El **valor inicial de Cuenta** se calcula multiplicando por **-2** la cantidad d
 
 De este modo, el valor inicial de **Cuenta** se va alterando según el peso de cada carta que va saliendo. Así, **Cuenta** < -2 indica probabilidad de carta baja, mientras que **Cuenta** > 0 indica probabilidad de carta alta.
 
- 
