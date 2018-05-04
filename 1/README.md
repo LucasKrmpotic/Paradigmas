@@ -32,15 +32,15 @@
 
 Argumentos:
 
-- **ManoManoJugador:** lista con las cartas del Manojugador en una mano.
+- **ManoManoJugador:** lista con las cartas del jugador en una mano.
 
-- **ManoManoCrupier:** lista con las cartas del Manocrupier en una mano.
+- **ManoManoCrupier:** lista con las cartas del crupier en una mano.
     
 - **CartasJugadas:** lista de las cartas jugadas.
 
-La regla **play/3** hace uso del functor **mejor_jugada/2** que unifica con la mejor jugada posible en las condiciones actuales, según el sistema de conteo de cartas **Uston SS**.
+La regla **play/3** hace uso del functor **mejor_jugada/2** que, dada una **Mano** unifica con el **ValorMano** mas cercano a 21 pero no mayor a 21.
 
-La lógica de **mejor_jugada/2** se encuentra declarada en el archivo [mejorJugada.pl](mejorJugada.pl)
+**Nota:** La lógica de **mejor_jugada/2** se encuentra declarada en el archivo [mejorJugada.pl](mejorJugada.pl)
 
 Además se declaran 3 reglas que unifican con valores significativos para la decisión de seguir pidiendo cartas o no. Estas son: 
 
@@ -50,8 +50,7 @@ Además se declaran 3 reglas que unifican con valores significativos para la dec
 
 3) **cota_superior/1:** unifica con **ValorMano >= 19** (a partir del 19 inclusive, convenimos en que la mejor jugada es plantarse independientemente de si la cuenta **Uston SS** arroja probabilidad de carta baja).
 
-
-**Las posibilidades son:**
+Con estos elementos, las posibilidades son de **play/3** son:
 
 1) Pide cartas siempre que la mano del crupier sea superior.
 
@@ -68,21 +67,20 @@ play(ManoJugador, ManoCrupier, _):-
 play(ManoJugador, _, _):- 
     hand(ManoJugador, ValorManoJugador),
     mejor_jugada(ManoJugador, ValorManoAux),
-    ValorManoJugador < 11, 
-    not(ValorManoAux > 18). 
+    cota_inferior(ValorManoJugador), 
+    not(valor_umbral(ValorManoAux)). 
 ```
 
-3) 
+3)  
 
 ```prolog
-% Aca vemos cuantas posibilidades hay para pedir cartas. Hay que pensar que si tenes un
-% >18 soft podemos seguir pidiendo. Más si hay posibilidades de que hayan cartas bajas.
-play(ManoJugador, _, CartasJugadas):-
-	mejor_jugada(ManoJugador, ValorMano),	% Veo la mano mas cercana a 21. Veo si ese valor es
-	ValorMano > 18,
-	es_as_once(ManoJugador, ValorMano), 			% soft, o sea, tiene un A con valor 11. Cuento las
-	contar_uston_ss(CartasJugadas, 1, Conteo),	% cartas con uston ss y me fijo si hay la posibilidad que me toque 
-	posibilidadDeCartaBaja(Conteo).
+play(ManoJugador, _, CartasJugadas):- 
+    mejor_jugada(ManoJugador, ValorMano),
+    valor_umbral(ValorMano),
+    not(cota_superior(ValorMano)),
+    es_as_once(ManoJugador, ValorMano),
+    contar_uston_ss(CartasJugadas, 1, Conteo),
+    posibilidadDeCartaBaja(Conteo).
 ```
 
 ```prolog
