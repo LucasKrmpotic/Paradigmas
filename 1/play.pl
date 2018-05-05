@@ -79,7 +79,7 @@ play(ManoJugador, _, CartasJugadas):-
 	format('hit',[]),
 	nl. 
 	
-play(_):-
+play(_, _, _):-
 	format('stand',[]),
 	nl.
 
