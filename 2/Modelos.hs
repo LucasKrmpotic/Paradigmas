@@ -76,5 +76,22 @@ beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { 
 
 beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = tintico:(bebidasTomadas cliente) }
 
-tomarTrago (Soda fuerza) cliente = cliente { nombreCliente = (efectoSoda fuerza (nombreCliente cliente)), bebidasTomadas = soda:(bebidasTomadas cliente) } 
+beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = soda:(bebidasTomadas cliente) } 
+
           
+tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
+tomarTragos cliente [] = cliente
+tomarTragos cliente [x] = beber x cliente
+tomarTragos cliente [x:xs] = tomarTragos((beber cliente) xs)
+
+dameOtro :: TipoCliente -> TipoCliente
+dameOtro cliente = beber (last (bebidasTomadas cliente))
+
+cualesPuedeTomar :: TipoCliente -> [TipoBebida] -> [TipoBebida]
+cualesPuedeTomar cliente listaTragos = filter (puedoTomar cliente) listaTragos
+ 
+puedoTomar cliente trago = resistencia (beber trago cliente) > 0
+
+
+cuantasPuedeTomar :: TipoCliente -> [TipoBebida] -> Int
+cuantasPuedeTomar cliente listaTragos = length (cualesPuedeTomar cliente listaTragos)
