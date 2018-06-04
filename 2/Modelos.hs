@@ -82,7 +82,7 @@ beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { 
 
 beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = (bebidasTomadas cliente)++[Tintico] }
 
-beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = (bebidasTomadas cliente)++[soda] } 
+beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = (bebidasTomadas cliente)++[soda]} 
 
           
 tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
@@ -179,3 +179,15 @@ getItinerarioMasIntenso (i:j:cola) = if intensidad i > intensidad j
                                      then getItinerarioMasIntenso (i:cola)
                                      else getItinerarioMasIntenso (j:cola)
 
+
+-- Objetivo 5
+sumarAmigos :: TipoCliente -> TipoCliente
+sumarAmigos cliente = foldl agregarAmigo cliente (concat(map listaAmigos (listaAmigos cliente)))
+
+-- -- Objetivo 5
+-- sumarAmigos :: TipoCliente -> [TipoCliente] -> TipoCliente
+-- sumarAmigos cliente = foldr agregarAmigo cliente (concat(map listaAmigos (listaAmigos cliente)))
+
+-- sumarAmigosDeAmigos :: Int -> TipoCliente -> TipoCliente
+-- sumarAmigosDeAmigos 1 amigos = foldl concat [] amigos
+-- sumarAmigosDeAmigos indireccion
