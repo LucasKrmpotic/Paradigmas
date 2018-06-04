@@ -1,63 +1,87 @@
+import Clientes
+import Bebidas
 
--- Definicion de Personas
--- Cliente nombre, resistencia, lista de amigos
+iniciarFiesta = do
 
-data TipoCliente = Cliente { 
-	nombreCliente :: String, 
-	resistencia :: Int, 
-	listaAmigos :: [TipoCliente]
-} deriving (Show)
+    -- Objetivo 2
+    -- Crear los clientes rodri, marcos, cristian y ana
+    imprimirConEnter "El boliche acaba de abrir en la noche de viernes, ¿Quién vendrá a la joda de esta noche?"  
+    
+    let rodri = Cliente "Rodri" 55 []
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente rodri) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente rodri)
+    
+    let marcos = Cliente "Marcos"    40 [rodri]
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente marcos) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter ( infoCliente marcos)
+    
+    let cristian = Cliente "Cristian"  2  []
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente cristian) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente cristian)
+    
+    let ana = Cliente "Ana"       120 [marcos, rodri]
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente ana) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente ana)
 
-data TipoBebida = Bebida {
-	nombreBebida :: String,
-	efecto :: (TipoCliente -> TipoCliente)
-} 
+    imprimirConEnter "¡Todos los viernes la noche es de la Haskell House!"
+    
+    -- Objetivo 3
+    -- Crear la función comoEsta
+    imprimirConEnter ("¡Vamos a ver como llegaron!")
 
-rodri = Cliente "Rodri"     55 []
-marcos = Cliente "Marcos"    40 [rodri]
-cristian = Cliente "Cristian"  2  []
-ana = Cliente "Ana"       120 [marcos, rodri]
+    imprimirConEnter ("Ana está " ++ (comoEsta ana))
+    imprimirConEnter ("Cristian está " ++ (comoEsta cristian))
+    imprimirConEnter ("Marcos está " ++ (comoEsta marcos))
+    
+    imprimirConEnter "¡El grupo de amigos que haga más quilombo se lleva un champagne!"
 
-getName :: TipoCliente -> String
-getName (Cliente nombreCliente _ _ ) = nombreCliente
+    -- Objetivo 4
+    -- Crear una función para agregar amigos
+    imprimirConEnter "Hagamos que estos chicos se lleven bien"
+    imprimirConEnter "Vamos a hacer que se amiguen rodri con marcos"
 
-comoEsta :: TipoCliente -> String
-comoEsta (Cliente _  resistencia  amigos) 
-	| resistencia > 50 = "fresco"
-	| resistencia < 50 &&  length amigos > 1 = "piola"
-	| otherwise = "duro"
+    let clienteAux = agregarAmigo rodri marcos
+    let rodri = clienteAux
+    imprimirConEnter(infoCliente rodri)
 
-agregarAmigo :: TipoCliente -> TipoCliente -> TipoCliente
-agregarAmigo cliente amigo 
-	| ((nombreCliente cliente) == (nombreCliente amigo)) || (any (((==) (nombreCliente amigo)).nombreCliente) (listaAmigos cliente)) = cliente
-	| otherwise = cliente { listaAmigos = amigo : (listaAmigos cliente) } 
+    imprimirConEnter "¡Muy Bien! Ahora hagamos que Cristian tenga algún amigo"
+    let clienteAux = agregarAmigo cristian marcos
+    let cristian = clienteAux
+    let clienteAux = agregarAmigo cristian ana
+    let cristian = clienteAux
 
-cambiarResistencia :: (Int -> Int) -> TipoCliente -> TipoCliente
-cambiarResistencia funcion cliente = cliente { resistencia = (funcion (resistencia  cliente)) }
+    imprimirConEnter(infoCliente cristian)
+    imprimirConEnter "¡Excelente! ¿Cómo estás Cristian?"
+    imprimirConEnter ("Cristian responde \" " ++ (comoEsta cristian) ++ " \" ")
 
-grog_xd_efecto :: TipoCliente -> TipoCliente
-grog_xd_efecto cliente = cliente { resistencia = 0 }
+    imprimirConEnter "¡Esta noche hay ofertas en bebidas! ¡A reventar la barra!"
 
-jarra_loca_efecto :: TipoCliente -> TipoCliente
-jarra_loca_efecto cliente = cambiarResistencia (10 -) cliente
+    -- Objetivo 5
+    -- Crear abstracción adecuada para las bebidas
+    imprimirConEnter "¿Qué opciones de bebidas hay?"
+    let grog_xd = GrogXD
 
-klusener_efecto :: TipoCliente -> TipoCliente
-klusener_efecto cliente = cliente
+    -- Objetivo 6
+    -- Agregar una función para que puedan rescatarse
+    imprimirConEnter "Che pibe, calmate o te saco afuera -- Juan \"Roca\" Mori, Personal de Seguridad"
+    imprimirConEnter "Cristian se va a tener que rescatar"
+    let clienteAux = rescatarse cristian 3
+    let cristian = clienteAux
 
-tintico_efecto :: TipoCliente -> TipoCliente
-tintico_efecto cliente = cliente
+    imprimirConEnter "¿Cómo estás Cristian?"
+    imprimirConEnter(infoCliente cristian) 
 
-soda_efecto :: TipoCliente -> TipoCliente
-soda_efecto cliente = cliente
 
-grog_xd = Bebida "Grog XD" grog_xd_efecto
-jarra_loca = Bebida "Jarra Loca" jarra_loca_efecto
-klusener = Bebida "klusener" klusener_efecto
-tintico = Bebida "tintico" tintico_efecto
-soda = Bebida "soda" soda_efecto
+    -- Objetivo 7
+    -- Hacer el itinerario con Ana
+    imprimirConEnter "¡Ana parece que vino a pasarla bien!"
+    imprimirConEnter "Ana se toma una jarra loca, un klusener de chocolate, se rescata 2 horas y toma un klusener de huevo"
+    let clienteAux = beber Klusener chocolate (beber JarraLoca ana)
+    imprimirConEnter ()
 
-rescatarse :: TipoCliente -> Int -> TipoCliente
-rescatarse cliente horas | horas > 3 = cliente { resistencia = (resistencia cliente) + 200 }
-						 | horas > 0 = cliente { resistencia = (resistencia cliente) + 100 }
-						 | otherwise = cliente 
-
+imprimirConEnter:: String -> IO ()
+imprimirConEnter que = do 
+    putStrLn que
+    key <- getLine 
+    return ()
+ 
