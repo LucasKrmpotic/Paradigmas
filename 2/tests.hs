@@ -1,5 +1,4 @@
-import Clientes
-import Bebidas
+import Modelos
 import Test.HUnit
 
 rodri = Cliente "Rodri" 55 []

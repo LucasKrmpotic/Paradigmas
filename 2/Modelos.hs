@@ -1,13 +1,28 @@
-module
- Clientes where 
+module Modelos where
 
 -- Definicion del TipoCLiente
 data TipoCliente = Cliente { 
 	nombreCliente :: String, 
 	resistencia :: Int, 
-	listaAmigos :: [TipoCliente]
+	listaAmigos :: [TipoCliente],
+	bebidasTomadas :: [Bebidas]
 } deriving (Show)
 
+data TipoBebida = 
+        GrogXD 
+      | JarraLoca
+      | Klusener {sabor :: String}
+      | Tintico
+      | Soda  {fuerza :: Int}
+      | JarraPopular {espirituosidad :: Int}
+
+instance Show TipoBebida where
+    show GrogXD = "GrogXD"
+    show JarraLoca = "Jarra Loca"
+    show (Klusener sabor) = ("Klusener de " ++ sabor)
+    show Tintico = "Tintico"
+    show (Soda fuerza) = ("Soda de fuerza " ++ show(fuerza))
+    show (JarraPopular espirituosidad) = ("Jarra popular de espirituosidad " ++ show(espirituosidad))
 
 -- ComoEsta: Devuelve el estado de ebriedad del cliente en cadena
 comoEsta :: TipoCliente -> String
@@ -39,10 +54,27 @@ infoCliente cliente =
 listarAmigos :: TipoCliente -> String
 listarAmigos cliente = listarAmigosRecursion (listaAmigos cliente) ""
 
-bajar_resistencia:: Int -> TipoCliente -> TipoCliente
-bajar_resistencia cantidad cliente = cliente {resistencia = (resistencia cliente) - cantidad}
-
 listarAmigosRecursion :: [TipoCliente] -> String -> String 
 listarAmigosRecursion [] cadenaAmigos = "No tiene amigos"
 listarAmigosRecursion [x] cadenaAmigos = cadenaAmigos ++ (nombreCliente x)
 listarAmigosRecursion (x:xs) cadenaAmigos = listarAmigosRecursion xs (cadenaAmigos ++ (nombreCliente x) ++ ", ")
+
+-- Baja la resistencia una cantidad dada
+bajar_resistencia:: Int -> TipoCliente -> TipoCliente
+bajar_resistencia cantidad cliente = cliente {resistencia = (resistencia cliente) - cantidad}
+
+
+efectoSoda :: Int -> String -> String
+efectoSoda fuerza nombre = "e" ++ (replicate fuerza 'r') ++ "p" ++ nombre
+
+beber :: TipoBebida -> TipoCliente -> TipoCliente
+beber GrogXD cliente = cliente { resistencia = 0, bebidasTomadas = GrogXD:(bebidasTomadas cliente)}
+
+beber JarraLoca cliente = cliente { listaAmigos = map (bajar_resistencia 10) (listaAmigos cliente), bebidasTomadas = JarraLoca:(bebidasTomadas cliente) }
+
+beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { bebidasTomadas = klusener:(bebidasTomadas cliente)}
+
+beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = tintico:(bebidasTomadas cliente) }
+
+tomarTrago (Soda fuerza) cliente = cliente { nombreCliente = (efectoSoda fuerza (nombreCliente cliente)), bebidasTomadas = soda:(bebidasTomadas cliente) } 
+          

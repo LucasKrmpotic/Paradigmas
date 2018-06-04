@@ -1,4 +1,4 @@
-import Clientes
+import Modelos
 import Bebidas
 
 iniciarFiesta = do
@@ -76,8 +76,9 @@ iniciarFiesta = do
     -- Hacer el itinerario con Ana
     imprimirConEnter "¡Ana parece que vino a pasarla bien!"
     imprimirConEnter "Ana se toma una jarra loca, un klusener de chocolate, se rescata 2 horas y toma un klusener de huevo"
-    let clienteAux = beber Klusener chocolate (beber JarraLoca ana)
-    imprimirConEnter ()
+    --let clienteAux =  
+    --let ana = clienteAux
+    --imprimirConEnter ()
 
 imprimirConEnter:: String -> IO ()
 imprimirConEnter que = do 
