@@ -65,7 +65,7 @@ iniciarFiesta = do
     -- Agregar una función para que puedan rescatarse
     imprimirConEnter "Che pibe, calmate o te saco afuera -- Juan \"Roca\" Mori, Personal de Seguridad"
     imprimirConEnter "Cristian se va a tener que rescatar"
-    let clienteAux = rescatarse cristian 3
+    let clienteAux = rescatarse 3 cristian
     let cristian = clienteAux
 
     imprimirConEnter "¿Cómo estás Cristian?"

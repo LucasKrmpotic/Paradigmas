@@ -1,4 +1,5 @@
 module Modelos where
+import Data.List
 
 -- Definicion del TipoCLiente
 data TipoCliente = Cliente { 
@@ -43,8 +44,8 @@ agregarAmigo cliente amigo
 	| otherwise = cliente { listaAmigos = amigo : (listaAmigos cliente) } 
 
 -- Dado un cliente y una cantidad de horas, aumenta la resistencia del cliente según lo rescatado que esté
-rescatarse :: TipoCliente -> Int -> TipoCliente
-rescatarse cliente horas | horas > 3 = cliente { resistencia = (resistencia cliente) + 200 }
+rescatarse :: Int -> TipoCliente -> TipoCliente
+rescatarse horas cliente | horas > 3 = cliente { resistencia = (resistencia cliente) + 200 }
 						 | horas > 0 = cliente { resistencia = (resistencia cliente) + 100 }
 						 | otherwise = cliente 
 
@@ -73,15 +74,15 @@ efectoSoda :: Int -> String -> String
 efectoSoda fuerza nombre = "e" ++ (replicate fuerza 'r') ++ "p" ++ nombre
 
 beber :: TipoBebida -> TipoCliente -> TipoCliente
-beber GrogXD cliente = cliente { resistencia = 0, bebidasTomadas = GrogXD:(bebidasTomadas cliente)}
+beber GrogXD cliente = cliente { resistencia = 0, bebidasTomadas = (bebidasTomadas cliente)++[GrogXD]}
 
-beber JarraLoca cliente = cliente { listaAmigos = map (bajar_resistencia 10) (listaAmigos cliente), bebidasTomadas = JarraLoca:(bebidasTomadas cliente) }
+beber JarraLoca cliente = cliente { listaAmigos = map (bajar_resistencia 10) (listaAmigos cliente), bebidasTomadas = (bebidasTomadas cliente)++[JarraLoca] }
 
-beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { bebidasTomadas = klusener:(bebidasTomadas cliente)}
+beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { bebidasTomadas = (bebidasTomadas cliente)++[klusener]}
 
-beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = Tintico:(bebidasTomadas cliente) }
+beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = (bebidasTomadas cliente)++[Tintico] }
 
-beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = soda:(bebidasTomadas cliente) } 
+beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = (bebidasTomadas cliente)++[soda] } 
 
           
 tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
@@ -100,3 +101,81 @@ puedoTomar cliente trago = resistencia (beber trago cliente) > 0
 
 cuantasPuedeTomar :: TipoCliente -> [TipoBebida] -> Int
 cuantasPuedeTomar cliente listaTragos = length (cualesPuedeTomar cliente listaTragos)
+
+-- Objetivo 3 - ITINERARIOS
+
+robertoCarlos = ClienteBebidasTomadas "Roberto Carlos" 165 [] []
+
+data TipoItinerario = Itinerario {
+	nombre :: String, 
+	tiempo :: Float, 
+	acciones :: [(TipoCliente -> TipoCliente)]
+}
+
+mezclaExplosiva = Itinerario{
+	nombre = "Mezcla Explosiva", 
+	tiempo = 2.5, 
+	acciones = [
+		beber GrogXD,
+		beber GrogXD, 
+		beber (Klusener "huevo"), 
+		beber (Klusener "frutilla")
+	]
+}
+
+itinerarioBasico = Itinerario{
+    nombre="Basico",
+    tiempo= 5, 
+    acciones = [
+        beber JarraLoca, 
+        beber (Klusener "chocolate"), 
+        (rescatarse 3), 
+        beber (Klusener "huevo")
+    ]
+}
+
+salidaDeAmigos = Itinerario{
+    nombre="Salida de amigos", 
+    tiempo=1, 
+    acciones = [
+        beber (Soda 1), 
+        beber Tintico, 
+        (agregarAmigo robertoCarlos), 
+        beber JarraLoca
+    ]
+}
+
+itinerarioAna = Itinerario{
+    nombre="Itinerario Ana",
+    tiempo= 1, 
+    acciones = [
+        beber JarraLoca, 
+        beber (Klusener "chocolate"), 
+        (rescatarse 2), 
+        beber (Klusener "huevo")
+    ]
+}
+
+
+hacerItinerario :: TipoItinerario -> TipoCliente -> TipoCliente
+hacerItinerario itinerario cliente = hacerAccionesItinerario (acciones itinerario) cliente
+
+hacerAccionesItinerario :: [(TipoCliente-> TipoCliente)] -> TipoCliente -> TipoCliente
+hacerAccionesItinerario [] cliente = cliente
+hacerAccionesItinerario [f] cliente = f cliente
+hacerAccionesItinerario (f:fs) cliente = hacerAccionesItinerario fs (f cliente)
+
+-- Objetivo 4
+intensidad:: TipoItinerario -> Float
+intensidad itinerario = genericLength(acciones itinerario) / (tiempo itinerario)
+
+hacerItinerarioMasIntenso :: [TipoItinerario] -> TipoCliente -> TipoCliente
+hacerItinerarioMasIntenso [] cliente = cliente
+hacerItinerarioMasIntenso itinerarios cliente = hacerItinerario (getItinerarioMasIntenso itinerarios) cliente
+
+getItinerarioMasIntenso :: [TipoItinerario] -> TipoItinerario
+getItinerarioMasIntenso [i] = i
+getItinerarioMasIntenso (i:j:cola) = if intensidad i > intensidad j
+                                     then getItinerarioMasIntenso (i:cola)
+                                     else getItinerarioMasIntenso (j:cola)
+
