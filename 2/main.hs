@@ -1,5 +1,5 @@
 import Modelos
-import Bebidas
+-- import Bebidas
 
 iniciarFiesta = do
 
@@ -7,7 +7,7 @@ iniciarFiesta = do
     -- Crear los clientes rodri, marcos, cristian y ana
     imprimirConEnter "El boliche acaba de abrir en la noche de viernes, ¿Quién vendrá a la joda de esta noche?"  
     
-    let rodri = Cliente "Rodri" 55 []
+    let rodri = Cliente "Rodri" 55 [] 
     imprimirConEnter ("Acaba de llegar " ++ (nombreCliente rodri) ++ " a la fiesta\n¡Vamos a conocerlo!")
     imprimirConEnter(infoCliente rodri)
     
@@ -15,7 +15,7 @@ iniciarFiesta = do
     imprimirConEnter ("Acaba de llegar " ++ (nombreCliente marcos) ++ " a la fiesta\n¡Vamos a conocerlo!")
     imprimirConEnter ( infoCliente marcos)
     
-    let cristian = Cliente "Cristian"  2  []
+    let cristian = Cliente "Cristian"  2  [] 
     imprimirConEnter ("Acaba de llegar " ++ (nombreCliente cristian) ++ " a la fiesta\n¡Vamos a conocerlo!")
     imprimirConEnter(infoCliente cristian)
     

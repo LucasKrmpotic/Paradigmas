@@ -4,9 +4,14 @@ module Modelos where
 data TipoCliente = Cliente { 
 	nombreCliente :: String, 
 	resistencia :: Int, 
+	listaAmigos :: [TipoCliente]
+} | ClienteBebidasTomadas {
+	nombreCliente :: String, 
+	resistencia :: Int, 
 	listaAmigos :: [TipoCliente],
-	bebidasTomadas :: [Bebidas]
+	bebidasTomadas :: [TipoBebida]
 } deriving (Show)
+
 
 data TipoBebida = 
         GrogXD 
@@ -26,9 +31,9 @@ instance Show TipoBebida where
 
 -- ComoEsta: Devuelve el estado de ebriedad del cliente en cadena
 comoEsta :: TipoCliente -> String
-comoEsta (Cliente _  resistencia  amigos) 
-	| resistencia > 50 = "fresco"
-	| resistencia < 50 &&  length amigos > 1 = "piola"
+comoEsta cliente 
+	| resistencia cliente > 50 = "fresco"
+	| resistencia cliente < 50 &&  length (listaAmigos cliente) > 1 = "piola"
 	| otherwise = "duro"
 
 -- Agregar un amigo: Dado un cliente y un amigo que no tenga el cliente, devuelve el cliente con el amigo agregado
@@ -74,7 +79,7 @@ beber JarraLoca cliente = cliente { listaAmigos = map (bajar_resistencia 10) (li
 
 beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { bebidasTomadas = klusener:(bebidasTomadas cliente)}
 
-beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = tintico:(bebidasTomadas cliente) }
+beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = Tintico:(bebidasTomadas cliente) }
 
 beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = soda:(bebidasTomadas cliente) } 
 
@@ -82,10 +87,10 @@ beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombre
 tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
 tomarTragos cliente [] = cliente
 tomarTragos cliente [x] = beber x cliente
-tomarTragos cliente [x:xs] = tomarTragos((beber cliente) xs)
+tomarTragos cliente (x:xs) = tomarTragos (beber x cliente) xs 
 
 dameOtro :: TipoCliente -> TipoCliente
-dameOtro cliente = beber (last (bebidasTomadas cliente))
+dameOtro cliente = beber (last (bebidasTomadas cliente)) cliente
 
 cualesPuedeTomar :: TipoCliente -> [TipoBebida] -> [TipoBebida]
 cualesPuedeTomar cliente listaTragos = filter (puedoTomar cliente) listaTragos
