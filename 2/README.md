@@ -151,20 +151,20 @@ Definición de funciones:
     tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
 
 #### Hace a un cliente beber la última bebida tomada
-dameOtro :: TipoCliente -> TipoCliente
+    dameOtro :: TipoCliente -> TipoCliente
 
 #### Dada una lista, decide cuales puede tomar sin quedarse en 0
-cualesPuedeTomar :: TipoCliente -> [TipoBebida] -> [TipoBebida]
+    cualesPuedeTomar :: TipoCliente -> [TipoBebida] -> [TipoBebida]
 
 #### Dada una lista, te dice la cantidad de bebidas en la lista que puede elegir para tomar sin quedarse un cliente con la resistencia en 0
-cuantasPuedeTomar :: TipoCliente -> [TipoBebida] -> Int
+    cuantasPuedeTomar :: TipoCliente -> [TipoBebida] -> Int
 
 #### Hace que un cliente haga un itinerario dado
-hacerItinerario :: TipoItinerario -> TipoCliente -> TipoCliente
+    hacerItinerario :: TipoItinerario -> TipoCliente -> TipoCliente
 
 #### Calcula la intensidad de un itinerario dado
-intensidad:: TipoItinerario -> Float
+    intensidad:: TipoItinerario -> Float
 
 #### Hace que un cliente haga el itinerario con más intensidad de los itinerarios dados
-hacerItinerarioMasIntenso :: [TipoItinerario] -> TipoCliente -> TipoCliente
+    hacerItinerarioMasIntenso :: [TipoItinerario] -> TipoCliente -> TipoCliente
 
