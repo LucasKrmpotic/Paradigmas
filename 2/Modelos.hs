@@ -13,6 +13,10 @@ data TipoCliente = Cliente {
 	bebidasTomadas :: [TipoBebida]
 } deriving (Show)
 
+rodri = Cliente "Rodri" 55 [] 
+marcos = Cliente "Marcos" 40 [rodri]
+cristian = Cliente "Cristian" 2  []
+ana = Cliente "Ana"  120 [marcos, rodri]
 
 data TipoBebida = 
         GrogXD 
@@ -51,10 +55,16 @@ rescatarse horas cliente | horas > 3 = cliente { resistencia = (resistencia clie
 
 -- Devuelve una cadena con la información actual del cliente
 infoCliente :: TipoCliente -> String
-infoCliente cliente = 
-	"Nombre: " ++ (nombreCliente cliente) 
-    ++ "\nresistencia: " ++ (show (resistencia cliente)) 
-    ++ "\namigos: " ++ listarAmigos cliente
+infoCliente (Cliente nombre resistencia listaAmigos)= 
+	"Nombre: " ++ nombre  
+    ++ "\nResistencia: " ++ (show resistencia) 
+    ++ "\nAmigos: " ++ listarAmigos (Cliente nombre resistencia listaAmigos)
+
+infoCliente (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas) = 
+    "Nombre: " ++ nombre  
+    ++ "\nResistencia: " ++ (show resistencia) 
+    ++ "\nAmigos: " ++ listarAmigos (Cliente nombre resistencia listaAmigos)
+    ++ "\nBebidas tomadas: " ++ listarBebidas bebidasTomadas
 
 -- Devuelve la lista de amigos en cadena de una forma amigable
 listarAmigos :: TipoCliente -> String
@@ -64,6 +74,16 @@ listarAmigosRecursion :: [TipoCliente] -> String -> String
 listarAmigosRecursion [] cadenaAmigos = "No tiene amigos"
 listarAmigosRecursion [x] cadenaAmigos = cadenaAmigos ++ (nombreCliente x)
 listarAmigosRecursion (x:xs) cadenaAmigos = listarAmigosRecursion xs (cadenaAmigos ++ (nombreCliente x) ++ ", ")
+
+-- Devuelve la lista de amigos en cadena de una forma amigable
+listarBebidas :: [TipoBebida] -> String
+listarBebidas bebidas = listarBebidasRecursion bebidas ""
+
+listarBebidasRecursion :: [TipoBebida] -> String -> String 
+listarBebidasRecursion [] cadenaBebidas = "No tomo nada"
+listarBebidasRecursion [x] cadenaBebidas = cadenaBebidas ++ (show x)
+listarBebidasRecursion (x:xs) cadenaBebidas = listarBebidasRecursion xs (cadenaBebidas ++ (show x) ++ ", ")
+
 
 -- Baja la resistencia una cantidad dada
 bajar_resistencia:: Int -> TipoCliente -> TipoCliente
@@ -76,17 +96,39 @@ efectoSoda fuerza nombre = "e" ++ (replicate fuerza 'r') ++ "p" ++ nombre
 jarraPopular = JarraPopular 2
 
 beber :: TipoBebida -> TipoCliente -> TipoCliente
-beber GrogXD cliente = cliente { resistencia = 0, bebidasTomadas = (bebidasTomadas cliente)++[GrogXD]}
 
-beber JarraLoca cliente = cliente { listaAmigos = map (bajar_resistencia 10) (listaAmigos cliente), bebidasTomadas = (bebidasTomadas cliente)++[JarraLoca] }
+beber GrogXD (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas ) 
+    = ClienteBebidasTomadas nombre 0 listaAmigos (bebidasTomadas++[GrogXD])
+beber GrogXD (Cliente nombre resistencia listaAmigos) 
+    = (Cliente nombre 0 listaAmigos)
 
-beber klusener cliente = bajar_resistencia  (length (sabor klusener)) cliente { bebidasTomadas = (bebidasTomadas cliente)++[klusener]}
+beber JarraLoca (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas ) 
+    = ClienteBebidasTomadas nombre 0 (map (bajar_resistencia 10) listaAmigos) (bebidasTomadas++[JarraLoca])
+beber JarraLoca (Cliente nombre resistencia listaAmigos) 
+    = (Cliente nombre 0 (map (bajar_resistencia 10) listaAmigos))
 
-beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (length (listaAmigos cliente))), bebidasTomadas = (bebidasTomadas cliente)++[Tintico] }
+beber klusener (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas )  
+    = bajar_resistencia  (length (sabor klusener)) (ClienteBebidasTomadas nombre resistencia listaAmigos (bebidasTomadas++[klusener]) ) 
+beber klusener (Cliente nombre resistencia listaAmigos)  
+    = bajar_resistencia  (length (sabor klusener)) (Cliente nombre resistencia listaAmigos ) 
+    
+beber Tintico (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas )  
+    = ClienteBebidasTomadas nombre (resistencia + (5 * (length listaAmigos))) listaAmigos (bebidasTomadas++[Tintico]) 
+beber Tintico (Cliente nombre resistencia listaAmigos)  
+    = (Cliente nombre (resistencia + (5 * (length listaAmigos ))) listaAmigos ) 
 
-beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = (bebidasTomadas cliente)++[soda]} 
+beber soda (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas )  
+    = ClienteBebidasTomadas (efectoSoda (fuerza soda) nombre) resistencia listaAmigos (bebidasTomadas++[soda])  
+beber soda (Cliente nombre resistencia listaAmigos)  
+    = Cliente (efectoSoda (fuerza soda) nombre) resistencia listaAmigos 
 
-beber jarraPopular cliente = foldr agregarAmigo cliente (sumarAmigosDeAmigos (espirituosidad jarraPopular)(listaAmigos cliente))
+beber jarraPopular (ClienteBebidasTomadas nombre resistencia listaAmigos bebidasTomadas)
+    = foldr agregarAmigo (ClienteBebidasTomadas nombre resistencia listaAmigos (bebidasTomadas++[jarraPopular])) (sumarAmigosDeAmigos (espirituosidad jarraPopular)(listaAmigos))
+beber jarraPopular (Cliente nombre resistencia listaAmigos)
+    = foldr agregarAmigo (Cliente nombre resistencia listaAmigos) (sumarAmigosDeAmigos (espirituosidad jarraPopular)(listaAmigos))
+          
+beber jarraPopular cliente 
+    = foldr agregarAmigo cliente (sumarAmigosDeAmigos (espirituosidad jarraPopular)(listaAmigos cliente))
           
 tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
 tomarTragos cliente [] = cliente
@@ -98,9 +140,7 @@ dameOtro cliente = beber (last (bebidasTomadas cliente)) cliente
 
 cualesPuedeTomar :: TipoCliente -> [TipoBebida] -> [TipoBebida]
 cualesPuedeTomar cliente listaTragos = filter (puedoTomar cliente) listaTragos
- 
 puedoTomar cliente trago = resistencia (beber trago cliente) > 0
-
 
 cuantasPuedeTomar :: TipoCliente -> [TipoBebida] -> Int
 cuantasPuedeTomar cliente listaTragos = length (cualesPuedeTomar cliente listaTragos)

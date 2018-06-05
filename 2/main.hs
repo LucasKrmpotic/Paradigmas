@@ -42,7 +42,7 @@ iniciarFiesta = do
 
     let clienteAux = agregarAmigo rodri marcos
     let rodri = clienteAux
-    imprimirConEnter(infoCliente rodri)
+    imprimirConEnter (infoCliente rodri)
 
     imprimirConEnter "¡Muy Bien! Ahora hagamos que Cristian tenga algún amigo"
     let clienteAux = agregarAmigo cristian marcos
@@ -50,7 +50,7 @@ iniciarFiesta = do
     let clienteAux = agregarAmigo cristian ana
     let cristian = clienteAux
 
-    imprimirConEnter(infoCliente cristian)
+    imprimirConEnter (infoCliente cristian)
     imprimirConEnter "¡Excelente! ¿Cómo estás Cristian?"
     imprimirConEnter ("Cristian responde \" " ++ (comoEsta cristian) ++ " \" ")
 
@@ -60,6 +60,20 @@ iniciarFiesta = do
     -- Crear abstracción adecuada para las bebidas
     imprimirConEnter "¿Qué opciones de bebidas hay?"
     let grog_xd = GrogXD
+    print grog_xd
+    let jarra_loca = JarraLoca
+    print jarra_loca
+    let klusener = Klusener "Huevo"
+    print klusener
+    let tintico = Tintico
+    print tintico
+
+    let clienteAux = beber GrogXD cristian
+    let cristian = clienteAux
+    imprimirConEnter (infoCliente cristian)
+
+    let clienteAux = beber JarraLoca ana
+    let ana = clienteAux
 
     -- Objetivo 6
     -- Agregar una función para que puedan rescatarse
@@ -69,20 +83,66 @@ iniciarFiesta = do
     let cristian = clienteAux
 
     imprimirConEnter "¿Cómo estás Cristian?"
-    imprimirConEnter(infoCliente cristian) 
-
+    imprimirConEnter (infoCliente cristian) 
 
     -- Objetivo 7
     -- Hacer el itinerario con Ana
     imprimirConEnter "¡Ana parece que vino a pasarla bien!"
     imprimirConEnter "Ana se toma una jarra loca, un klusener de chocolate, se rescata 2 horas y toma un klusener de huevo"
-    --let clienteAux =  
-    --let ana = clienteAux
-    --imprimirConEnter ()
+    let clienteAux = ((beber (Klusener "huevo")) . (rescatarse 2) . (beber (Klusener "chocolate")) . (beber JarraLoca)) ana
+    let ana = clienteAux
+    imprimirConEnter (infoCliente ana)
+    imprimirConEnter "Cierra el boliche en su magnifica noche de viernes"
 
+    -- Parte 2
+    -- Objetivo 1 
+    -- Crear el historial de bebidas
+
+    imprimirConEnter "Hoy noche de sábado la Haskell House la rompe"
+    imprimirConEnter "¡Habría que contar que lleva tomando cada uno!"
+
+    let rodri = ClienteBebidasTomadas "Rodri" 55 [] [Tintico]
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente rodri) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente rodri)
+    
+    let marcos = ClienteBebidasTomadas "Marcos"    40 [rodri] [(Klusener "guinda")]
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente marcos) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter ( infoCliente marcos)
+    
+    let cristian = ClienteBebidasTomadas "Cristian"  2  [] []
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente cristian) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente cristian)
+    
+    let ana = ClienteBebidasTomadas "Ana"       120 [marcos, rodri] [GrogXD, JarraLoca]
+    imprimirConEnter ("Acaba de llegar " ++ (nombreCliente ana) ++ " a la fiesta\n¡Vamos a conocerlo!")
+    imprimirConEnter(infoCliente ana)
+
+    imprimirConEnter "Hey Rodri, veni a tomar un klusener de guinda"
+    let clienteAux = beber (Klusener "guinda") rodri 
+    let rodri = clienteAux
+    imprimirConEnter (infoCliente rodri)
+    
+    imprimirConEnter "¡Hey Cristian, mira lo que hay en la barra para vos! ¡Tomatelo!"
+    let clienteAux = tomarTragos cristian [GrogXD, (Klusener "chocolate"), (Klusener "huevo"), Tintico] 
+    let cristian = clienteAux
+    imprimirConEnter (infoCliente cristian)
+
+    imprimirConEnter "Rodri quiere tomar otro klusener, denselo"
+    let clienteAux = dameOtro rodri 
+    let rodri = clienteAux
+    imprimirConEnter (infoCliente rodri)
+
+    -- Objetivo 2
+    imprimirConEnter "Ahora vamos a ver, ana, ¿Qué queres tomar entre un klusener de huevo, uno de guinda o un GrogXD, sin emborracharte?"
+    imprimirConEnter (listarBebidas (cualesPuedeTomar ana [(Klusener "huevo"), (Klusener "guinda"), GrogXD]))
+    let ana = clienteAux
+    imprimirConEnter (infoCliente rodri)
+
+    
 imprimirConEnter:: String -> IO ()
 imprimirConEnter que = do 
     putStrLn que
     key <- getLine 
     return ()
+ 
  
