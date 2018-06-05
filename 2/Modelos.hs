@@ -222,7 +222,6 @@ getItinerarioMasIntenso (i:j:cola) = if intensidad i > intensidad j
                                      then getItinerarioMasIntenso (i:cola)
                                      else getItinerarioMasIntenso (j:cola)
 
-
 -- Objetivo 5
 getAmigosDeAmigos :: [TipoCliente] -> [TipoCliente]
 getAmigosDeAmigos amigos = concat(map listaAmigos amigos)

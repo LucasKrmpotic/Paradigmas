@@ -135,10 +135,49 @@ iniciarFiesta = do
     -- Objetivo 2
     imprimirConEnter "Ahora vamos a ver, ana, ¿Qué queres tomar entre un klusener de huevo, uno de guinda o un GrogXD, sin emborracharte?"
     imprimirConEnter (listarBebidas (cualesPuedeTomar ana [(Klusener "huevo"), (Klusener "guinda"), GrogXD]))
+
     let ana = clienteAux
+    imprimirConEnter (infoCliente ana)
+
+    -- Objetivo 3
+    imprimirConEnter "Bueno, ahora los invito a tomar nuestros exquisitos itinerarios"
+    imprimirConEnter (nombre mezclaExplosiva)
+    imprimirConEnter (nombre itinerarioBasico)
+    imprimirConEnter (nombre salidaDeAmigos)
+
+    imprimirConEnter "¡Les presento a nuestro mayor cliente, Roberto Carlos!"
+    let clienteAux = robertoCarlos
+    let robertoCarlos = clienteAux
+    imprimirConEnter (infoCliente robertoCarlos) 
+    
+    imprimirConEnter "Lo reto a rodri a hacer una salida de amigos"
+    let clienteAux = hacerItinerario salidaDeAmigos rodri
+    let rodri = clienteAux
+    imprimirConEnter (infoCliente rodri)
+    
+    imprimirConEnter "Y ahora a Marcos a hacer una mezcla explosiva"
+    let clienteAux = hacerItinerario mezclaExplosiva marcos
+    let marcos = clienteAux
+    imprimirConEnter (infoCliente marcos)
+    
+    -- Objetivo 4
+    imprimirConEnter "¿Qué intensidad tendrá el itinerario basico?"
+    imprimirConEnter (show (intensidad itinerarioBasico))
+
+    imprimirConEnter "¡Vení Roberto, mostrá como se hace, hace el itinerario más fuerte!"
+    let clienteAux = hacerItinerarioMasIntenso [mezclaExplosiva, itinerarioBasico, salidaDeAmigos] robertoCarlos
+    let robertoCarlos = clienteAux
+
+    imprimirConEnter (infoCliente robertoCarlos)
+
+    -- Objetivo 5
+    imprimirConEnter "¡Rodri, ya termina la noche, tomate una jarra popular!"
+    let clienteAux = beber (JarraPopular 4) rodri
+    let rodri = clienteAux
     imprimirConEnter (infoCliente rodri)
 
-    
+    imprimirConEnter "¡Nos despedimos otra increible noche de sábado en la Haskell House. Los esperamos la semana que viene para más!"
+
 imprimirConEnter:: String -> IO ()
 imprimirConEnter que = do 
     putStrLn que
