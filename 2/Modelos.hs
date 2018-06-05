@@ -73,6 +73,8 @@ bajar_resistencia cantidad cliente = cliente {resistencia = (resistencia cliente
 efectoSoda :: Int -> String -> String
 efectoSoda fuerza nombre = "e" ++ (replicate fuerza 'r') ++ "p" ++ nombre
 
+jarraPopular = JarraPopular 2
+
 beber :: TipoBebida -> TipoCliente -> TipoCliente
 beber GrogXD cliente = cliente { resistencia = 0, bebidasTomadas = (bebidasTomadas cliente)++[GrogXD]}
 
@@ -84,6 +86,7 @@ beber Tintico cliente = cliente { resistencia = (resistencia cliente) + (5 * (le
 
 beber soda cliente = cliente { nombreCliente = (efectoSoda (fuerza soda) (nombreCliente cliente)), bebidasTomadas = (bebidasTomadas cliente)++[soda]} 
 
+beber jarraPopular cliente = foldr agregarAmigo cliente (sumarAmigosDeAmigos (espirituosidad jarraPopular)(listaAmigos cliente))
           
 tomarTragos :: TipoCliente -> [TipoBebida] -> TipoCliente
 tomarTragos cliente [] = cliente
@@ -181,13 +184,10 @@ getItinerarioMasIntenso (i:j:cola) = if intensidad i > intensidad j
 
 
 -- Objetivo 5
-sumarAmigos :: TipoCliente -> TipoCliente
-sumarAmigos cliente = foldl agregarAmigo cliente (concat(map listaAmigos (listaAmigos cliente)))
+getAmigosDeAmigos :: [TipoCliente] -> [TipoCliente]
+getAmigosDeAmigos amigos = concat(map listaAmigos amigos)
 
--- -- Objetivo 5
--- sumarAmigos :: TipoCliente -> [TipoCliente] -> TipoCliente
--- sumarAmigos cliente = foldr agregarAmigo cliente (concat(map listaAmigos (listaAmigos cliente)))
+sumarAmigosDeAmigos :: Int -> [TipoCliente] -> [TipoCliente]
+sumarAmigosDeAmigos 0 amigos = amigos
 
--- sumarAmigosDeAmigos :: Int -> TipoCliente -> TipoCliente
--- sumarAmigosDeAmigos 1 amigos = foldl concat [] amigos
--- sumarAmigosDeAmigos indireccion
+sumarAmigosDeAmigos indireccion amigos = (getAmigosDeAmigos amigos) ++ (sumarAmigosDeAmigos (indireccion - 1) (getAmigosDeAmigos amigos))
